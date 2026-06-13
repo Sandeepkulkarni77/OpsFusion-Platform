@@ -3,4 +3,4 @@ OpsFusion Platform is an end-to-end DevOps system that integrates CI/CD, contain
 
 ##  Architecture diagram
 
-<img width="930" height="608" alt="image" src="https://github.com/user-attachments/assets/32d6e72f-266b-4871-9262-745bcdadcb02" />
+<img width="1056" height="705" alt="image" src="https://github.com/user-attachments/assets/da9ecfd5-790a-4339-9f4c-8fdc5be287bc" />
