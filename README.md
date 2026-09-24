@@ -242,19 +242,357 @@ make stop
 
 ---
 
-# Project Structure
+# Milestone 3 – PostgreSQL, Docker Compose & Database Migrations
+
+The third milestone focuses on replacing the local SQLite database with PostgreSQL and creating a reproducible local development environment using Docker Compose and Flask-Migrate.
+
+## What Was Implemented
+
+- Replaced SQLite with PostgreSQL for the containerized application
+- Added PostgreSQL 16 as a Docker Compose service
+- Added Docker Compose for running the API and database together
+- Added environment-based database configuration
+- Added Flask-SQLAlchemy PostgreSQL integration
+- Added Flask-Migrate and Alembic for database migrations
+- Created the initial `students` table migration
+- Added migration files to version control
+- Updated the API Dockerfile to include migrations
+- Added Makefile commands for database startup, migrations, API builds and API startup
+- Verified API-to-PostgreSQL connectivity
+- Verified CRUD operations against PostgreSQL
+- Added a one-command workflow to start the database, run migrations and start the API
+
+## Architecture
+
+The application now follows this architecture:
+
+```text
+                    ┌─────────────────────┐
+                    │       Client        │
+                    │       curl          │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    Flask REST API   │
+                    │    API Container    │
+                    └──────────┬──────────┘
+                               │
+                               │ SQL
+                               ▼
+                    ┌─────────────────────┐
+                    │     PostgreSQL      │
+                    │    DB Container     │
+                    └─────────────────────┘
+```
+
+---
+
+## Docker Compose
+
+The application now uses two services:
+
+```text
+API
+ │
+ └── PostgreSQL
+```
+
+The `docker-compose.yml` defines:
+
+- `db` — PostgreSQL 16 database
+- `api` — Flask REST API
+
+The API connects to PostgreSQL using the `DATABASE_URL` environment variable.
+
+```yaml
+services:
+  db:
+    image: postgres:16
+    env_file:
+      - .env
+
+  api:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+```
+
+---
+
+## Environment Variables
+
+Database credentials are stored locally in `.env` and are **not committed to Git**.
+
+Example:
+
+```env
+POSTGRES_DB=opsfusion
+POSTGRES_USER=opsfusion
+POSTGRES_PASSWORD=localdevpassword
+```
+
+The `.env` file is included in `.gitignore`.
+
+Verify that Git ignores the file:
+
+```bash
+git check-ignore -v .env
+```
+
+The password is therefore not stored directly in `docker-compose.yml` or committed to the repository.
+
+---
+
+# Database Migrations
+
+Flask-Migrate and Alembic are used to manage database schema changes.
+
+## Initialize Migrations
+
+```bash
+flask --app app.app db init
+```
+
+## Create a Migration
+
+```bash
+flask --app app.app db migrate -m "create students table"
+```
+
+## Apply Migrations
+
+```bash
+flask --app app.app db upgrade
+```
+
+The initial migration creates the `students` table.
+
+Migration files are stored under:
+
+```text
+migrations/
+├── README
+├── alembic.ini
+├── env.py
+├── script.py.mako
+└── versions/
+    └── 714610d08115_create_students_table.py
+```
+
+---
+
+# Makefile Commands
+
+The Makefile was extended to simplify the development workflow.
+
+## Start PostgreSQL
+
+```bash
+make db-start
+```
+
+This starts the PostgreSQL container.
+
+## Run Database Migrations
+
+```bash
+make db-migrate
+```
+
+This runs the pending migrations against PostgreSQL.
+
+## Build the API Image
+
+```bash
+make api-build
+```
+
+This builds the Flask API Docker image.
+
+## Start the Complete Application
+
+```bash
+make api-run
+```
+
+The `api-run` target performs the following steps:
+
+```text
+Start PostgreSQL
+      ↓
+Run database migrations
+      ↓
+Start API
+```
+
+This provides a single command to start the complete local environment.
+
+---
+
+# Verify the Environment
+
+## Check Running Containers
+
+```bash
+docker compose ps
+```
+
+Expected services:
+
+```text
+opsfusion-platform-api-1
+opsfusion-platform-db-1
+```
+
+Both containers should show a running status.
+
+---
+
+# Verify API Health
+
+```bash
+curl http://localhost:8000/healthcheck
+```
+
+Expected response:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+The health check executes a database query to verify that the API can communicate with PostgreSQL.
+
+---
+
+# Test Student Creation
+
+Create a student:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/students \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Sandeep","email":"sandeep@example.com","age":22}'
+```
+
+Expected response:
+
+```json
+{
+  "age": 22,
+  "email": "sandeep@example.com",
+  "id": 1,
+  "name": "Sandeep"
+}
+```
+
+---
+
+# Verify Data
+
+Retrieve all students:
+
+```bash
+curl http://localhost:8000/api/v1/students
+```
+
+Example response:
+
+```json
+[
+  {
+    "age": 22,
+    "email": "sandeep@example.com",
+    "id": 1,
+    "name": "Sandeep"
+  }
+]
+```
+
+This confirms that the API can successfully write to and read from PostgreSQL.
+
+---
+
+# Database Migration Workflow
+
+When the database schema changes, the workflow is:
+
+```text
+Modify SQLAlchemy Model
+          ↓
+flask db migrate
+          ↓
+Migration File Created
+          ↓
+Review Migration
+          ↓
+flask db upgrade
+          ↓
+Database Schema Updated
+```
+
+Migration files are committed to Git so that other developers and environments can reproduce the same database schema.
+
+---
+
+# Current Project Structure
 
 ```text
 OpsFusion-Platform/
 │
 ├── app/
 │   ├── app.py
+│   ├── Dockerfile
+│   ├── .dockerignore
+│   ├── Makefile
 │   └── requirements.txt
 │
+├── migrations/
+│   ├── README
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions/
+│       └── 714610d08115_create_students_table.py
+│
+├── docker-compose.yml
 ├── Dockerfile
 ├── Makefile
 ├── .gitignore
 └── README.md
+```
+
+---
+
+# Development Workflow
+
+The current recommended workflow is:
+
+```bash
+# Start the database, run migrations and start the API
+make api-run
+```
+
+Verify the environment:
+
+```bash
+docker compose ps
+```
+
+Check API health:
+
+```bash
+curl http://localhost:8000/healthcheck
+```
+
+Test the API:
+
+```bash
+curl http://localhost:8000/api/v1/students
 ```
 
 ---
