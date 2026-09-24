@@ -1,9 +1,15 @@
-build:
-	docker build -t opsfusion-api:1.0.0 .
+.PHONY: db-start db-migrate api-build api-run
 
-run:
-	docker run -d --name opsfusion-api -p 8000:8000 opsfusion-api:1.0.0
+db-start:
+	docker compose up -d db
 
-stop:
-	docker stop opsfusion-api
-	docker rm opsfusion-api
+db-migrate:
+	docker compose run --rm api flask db upgrade
+
+api-build:
+	docker compose build api
+
+api-run:
+	$(MAKE) db-start
+	$(MAKE) db-migrate
+	docker compose up -d api

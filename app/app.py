@@ -3,6 +3,7 @@ import os
 
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO"),
@@ -43,6 +44,7 @@ def create_app(test_config=None):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
+    Migrate(app, db)
 
     @app.get("/healthcheck")
     def healthcheck():
