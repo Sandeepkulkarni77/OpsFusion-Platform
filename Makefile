@@ -16,3 +16,6 @@ api-run:
 
 test:
 	python3 -m unittest discover -s app -p "test_*.py"
+
+build:
+	pip install -r app/requirements.txt
