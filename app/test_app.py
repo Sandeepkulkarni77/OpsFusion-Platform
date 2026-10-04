@@ -8,15 +8,15 @@ from app import create_app, db
 class StudentApiTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.db_file = tempfile.NamedTemporaryFile(
+        with tempfile.NamedTemporaryFile(
             suffix=".db",
             delete=False
-        )
-        self.db_file.close()
+        ) as db_file:
+            self.db_file = db_file.name
 
         self.app = create_app({
             "TESTING": True,
-            "SQLALCHEMY_DATABASE_URI": f"sqlite:///{self.db_file.name}",
+            "SQLALCHEMY_DATABASE_URI": f"sqlite:///{self.db_file}",
         })
 
         with self.app.app_context():
@@ -29,7 +29,7 @@ class StudentApiTestCase(unittest.TestCase):
             db.session.remove()
             db.drop_all()
 
-        os.unlink(self.db_file.name)
+        os.unlink(self.db_file)
 
     def test_healthcheck(self):
         response = self.client.get("/healthcheck")

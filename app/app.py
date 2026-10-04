@@ -2,8 +2,8 @@ import logging
 import os
 
 from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO"),
