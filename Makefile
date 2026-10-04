@@ -13,3 +13,6 @@ api-run:
 	$(MAKE) db-start
 	$(MAKE) db-migrate
 	docker compose up -d api
+
+test:
+	python -m unittest discover -s app -p "test_*.py"
