@@ -15,4 +15,4 @@ api-run:
 	docker compose up -d api
 
 test:
-	python333 -m unittest discover -s app -p "test_*.py"
+	python3 -m unittest discover -s app -p "test_*.py"
