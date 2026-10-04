@@ -19,3 +19,6 @@ test:
 
 build:
 	pip install -r app/requirements.txt
+
+lint:
+	ruff check app
