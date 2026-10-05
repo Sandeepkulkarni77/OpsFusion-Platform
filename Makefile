@@ -18,7 +18,7 @@ test:
 	python3 -m unittest discover -s app -p "test_*.py"
 
 build:
-	pip install -r app/requirements.txt
+	python3 -m pip install -r app/requirements.txt
 
 lint:
 	ruff check app
