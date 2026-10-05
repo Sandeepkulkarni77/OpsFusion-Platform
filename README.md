@@ -835,6 +835,9 @@ The complete CI pipeline successfully completed all required stages:
 │ Docker Push                 │ ✔ PASSED │
 └─────────────────────────────┴──────────┘
 ```
+## CI Pipeline Execution 
+
+<img width="1528" height="817" alt="image" src="https://github.com/user-attachments/assets/a627d32b-6ed7-41b4-863e-4fdf610cd42f" />
 
 ---
 
