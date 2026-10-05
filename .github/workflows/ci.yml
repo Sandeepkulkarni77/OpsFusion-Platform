@@ -19,13 +19,13 @@ jobs:
         run:  actions/checkout@v4
 
       - name: Build API
-        run: make build
+        run:  make build
 
       - name: Run tests
-        run: make test
+        run:  make test
 
       - name: Run lint
-        run: make lint
+        run:  make lint
 
         
       - name: Set up Docker Buildx
