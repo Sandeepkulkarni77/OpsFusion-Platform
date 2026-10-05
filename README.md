@@ -596,3 +596,268 @@ curl http://localhost:8000/api/v1/students
 ```
 
 ---
+
+# Milestone 4 — CI Pipeline with GitHub Actions
+
+The fourth milestone focuses on implementing a CI pipeline using GitHub Actions and a self-hosted GitHub Actions runner.
+
+The pipeline automatically validates the application, runs tests and linting, builds the Docker image, and publishes the image to Docker Hub.
+
+## What Was Implemented
+
+- GitHub Actions CI workflow
+- Self-hosted GitHub Actions runner
+- API build stage
+- Automated unit testing
+- Automated code linting using Ruff
+- Docker Buildx
+- Secure Docker Hub authentication using GitHub Secrets
+- Docker image build and push
+- Path-based CI triggering
+- Manual workflow triggering
+- Versioned Docker image publishing
+
+---
+
+## CI Pipeline Flow
+
+```text
+Developer
+    │
+    │ git push
+    ▼
+GitHub Repository
+    │
+    ▼
+GitHub Actions
+    │
+    ├── Checkout Code
+    │
+    ├── Build API
+    │
+    ├── Run Tests
+    │
+    ├── Run Lint
+    │
+    ├── Setup Docker Buildx
+    │
+    ├── Login to Docker Hub
+    │
+    ├── Build Docker Image
+    │
+    └── Push Docker Image
+              │
+              ▼
+          Docker Hub
+```
+
+---
+
+## GitHub Actions Workflow
+
+The CI workflow is defined in:
+
+```text
+.github/workflows/ci.yml
+```
+
+The pipeline runs on a self-hosted GitHub Actions runner:
+
+```yaml
+runs-on: self-hosted
+```
+
+---
+
+## Pipeline Stages
+
+### 1. Checkout Code
+
+The workflow checks out the repository source code using:
+
+```yaml
+- name: Checkout Code
+  uses: actions/checkout@v4
+```
+
+---
+
+### 2. Build API
+
+The API build stage uses the Makefile:
+
+```bash
+make build
+```
+
+This installs the application dependencies required for testing and validation.
+
+---
+
+### 3. Run Tests
+
+Unit tests are executed using:
+
+```bash
+make test
+```
+
+The test target runs the Python unit test suite:
+
+```bash
+python3 -m unittest discover -s app -p "test_*.py"
+```
+
+---
+
+### 4. Run Lint
+
+Ruff is used for Python code linting:
+
+```bash
+make lint
+```
+
+The linting stage validates the application source code before the Docker image is built.
+
+---
+
+### 5. Setup Docker Buildx
+
+Docker Buildx is configured using:
+
+```yaml
+- name: Set up Docker Buildx
+  uses: docker/setup-buildx-action@v3
+```
+
+Buildx provides the Docker build functionality used by the CI pipeline.
+
+---
+
+### 6. Docker Hub Authentication
+
+Docker Hub credentials are stored securely as GitHub repository secrets:
+
+```text
+DOCKERHUB_USERNAME
+DOCKERHUB_TOKEN
+```
+
+The credentials are never hardcoded in the workflow.
+
+```yaml
+- name: Login to Docker Hub
+  uses: docker/login-action@v3
+  with:
+    username: ${{ secrets.DOCKERHUB_USERNAME }}
+    password: ${{ secrets.DOCKERHUB_TOKEN }}
+```
+
+---
+
+### 7. Build and Push Docker Image
+
+The Docker image is built and pushed using:
+
+```yaml
+- name: Build and Push Image
+  uses: docker/build-push-action@v6
+  with:
+    context: .
+    file: app/Dockerfile
+    push: true
+    tags: Sandeepkulkarni77/opsfusion-api:1.0.0
+```
+
+The image is published to Docker Hub using a semantic version tag:
+
+```text
+Sandeepkulkarni77/opsfusion-api:1.0.0
+```
+
+---
+
+## CI Trigger Conditions
+
+The pipeline automatically runs when changes are pushed to the `main` branch and the changes are inside the application directory:
+
+```yaml
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+```
+
+This prevents unrelated changes outside the application directory from automatically triggering CI.
+
+The workflow also supports manual execution:
+
+```yaml
+workflow_dispatch:
+```
+
+This allows the developer to manually trigger the CI pipeline from GitHub Actions whenever required.
+
+---
+
+## Self-Hosted GitHub Actions Runner
+
+The CI pipeline runs on a self-hosted GitHub Actions runner configured on an Ubuntu machine.
+
+```text
+Runner Type : Self-hosted
+Operating System : Ubuntu
+Architecture : x64
+```
+
+The runner is registered with the GitHub repository and executes the CI workflow locally instead of using GitHub-hosted infrastructure.
+
+---
+
+## CI Pipeline Result
+
+The complete CI pipeline successfully completed all required stages:
+
+```text
+┌─────────────────────────────┬──────────┐
+│ CI Stage                    │ Status   │
+├─────────────────────────────┼──────────┤
+│ Checkout Code               │ ✔ PASSED │
+│ Build API                   │ ✔ PASSED │
+│ Run Tests                   │ ✔ PASSED │
+│ Run Lint                    │ ✔ PASSED │
+│ Setup Docker Buildx         │ ✔ PASSED │
+│ Docker Login                │ ✔ PASSED │
+│ Docker Build                │ ✔ PASSED │
+│ Docker Push                 │ ✔ PASSED │
+└─────────────────────────────┴──────────┘
+```
+
+---
+
+## Milestone 4 Outcome
+
+**Milestone 4 is complete.**
+
+The project now has an automated CI pipeline that:
+
+```text
+Code Change
+    ↓
+GitHub Actions
+    ↓
+Build
+    ↓
+Test
+    ↓
+Lint
+    ↓
+Docker Build
+    ↓
+Docker Hub
+```
+
+The pipeline runs on a self-hosted GitHub Actions runner and securely publishes the versioned Docker image to Docker Hub.
