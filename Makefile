@@ -1,4 +1,4 @@
-.PHONY: db-start db-migrate api-build api-run
+.PHONY: db-start db-migrate api-build api-run test build lint
 
 db-start:
 	docker compose up -d db
@@ -15,10 +15,11 @@ api-run:
 	docker compose up -d api
 
 test:
-	python3 -m unittest discover -s app -p "test_*.py"
+	.venv/bin/python -m unittest discover -s app -p "test_*.py"
 
 build:
-	python3 -m pip install -r app/requirements.txt
+	python3 -m venv .venv
+	.venv/bin/python -m pip install -r app/requirements.txt
 
 lint:
 	ruff check app
