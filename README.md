@@ -841,9 +841,7 @@ The complete CI pipeline successfully completed all required stages:
 
 ---
 
-## Milestone 4 Outcome
-
-**Milestone 4 is complete.**
+**Milestone 4 outcome.**
 
 The project now has an automated CI pipeline that:
 
