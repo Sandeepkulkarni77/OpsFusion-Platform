@@ -16,7 +16,7 @@ jobs:
     
     steps:
       - name: checkout code
-        run: actions/checkout@v4
+        run:  actions/checkout@v4
 
       - name: Build API
         run: make build
