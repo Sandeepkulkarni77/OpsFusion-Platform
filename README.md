@@ -862,3 +862,114 @@ Docker Hub
 ```
 
 The pipeline runs on a self-hosted GitHub Actions runner and securely publishes the versioned Docker image to Docker Hub.
+
+## Milestone 5: Deploy REST API and Dependent Services on Bare Metal
+
+### Overview
+
+This milestone extends OpsFusion-Platform with a multi-container deployment, Nginx load balancing, and Vagrant-based VM provisioning.
+
+### Architecture
+
+- **Vagrant:** Provisions an Ubuntu VM.
+- **Bash provisioning script:** Installs Docker, the Docker Compose plugin, and Make.
+- **PostgreSQL:** Stores student records in a persistent Docker volume.
+- **API 1 and API 2:** Run two instances of the Flask REST API.
+- **Nginx:** Distributes incoming requests across both API instances.
+- **Docker Compose:** Manages the application and its dependent services.
+- **Makefile:** Provides deployment, status, logging, and cleanup commands.
+- **Postman:** Tests API endpoints and validates HTTP status codes.
+
+#### Deployment Architecture
+
+### Deployment
+
+Start and provision the virtual machine:
+
+```bash
+vagrant up
+```
+
+Connect to the VM and deploy the services:
+
+```bash
+vagrant ssh
+cd /vagrant
+make deploy
+```
+
+Check container status:
+
+```bash
+docker compose ps
+```
+
+View Nginx and application logs:
+
+```bash
+docker compose logs nginx
+docker compose logs api1 api2
+```
+
+### API Access
+
+The API is exposed through Nginx on port `8080`.
+
+Health check:
+
+```bash
+curl -i http://localhost:8080/healthcheck
+```
+
+Expected response: HTTP `200 OK`.
+
+Student API endpoints:
+
+| Method | Endpoint | Expected status |
+|---|---|---|
+| GET | `/healthcheck` | 200 |
+| POST | `/api/v1/students` | 201 |
+| GET | `/api/v1/students` | 200 |
+| GET | `/api/v1/students/{id}` | 200 |
+| PUT | `/api/v1/students/{id}` | 200 |
+| DELETE | `/api/v1/students/{id}` | 204 |
+| GET | `/api/v1/students/999999` | 404 |
+
+Successful deletion returns `204 No Content`. Requests for nonexistent students return `404 Not Found`.
+
+### Nginx Load Balancing
+
+Nginx uses an upstream group containing both API containers:
+
+- `api1:8000`
+- `api2:8000`
+
+Requests arriving on port `8080` are proxied to the API instances using Nginx's default round-robin load-balancing behavior.
+
+Verify the upstreams in the Nginx access logs:
+
+```bash
+docker compose logs nginx
+```
+
+### Postman Testing
+
+Import `postman/OpsFusion-Milestone5.postman_collection.json` into Postman and run the requests in order.
+
+The collection tests the health check, student creation, listing, retrieval, update, deletion, and handling of a nonexistent student. Automated assertions validate the expected HTTP status codes and selected response fields.
+
+### Cleanup
+
+Stop the application containers:
+
+```bash
+make stop
+```
+
+Stop the VM from the host machine:
+
+```bash
+vagrant halt
+```
+
+To remove the VM entirely, run `vagrant destroy` from the host machine. This does not delete the project files.
