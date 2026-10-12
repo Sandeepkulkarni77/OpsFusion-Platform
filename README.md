@@ -898,145 +898,103 @@ vagrant ssh
 
 3. Deploy the services
 
-Run the following commands inside the VM:
+Connect to the Vagrant VM from the **host machine**:
 
+```bash
+vagrant ssh
+```
+
+Run the following commands **inside the VM** to navigate to the shared project directory and deploy the application:
+
+```bash
 cd /vagrant
 make deploy
+```
 
-The deployment starts PostgreSQL, waits for the database to become healthy, runs database migrations, and starts both API instances and Nginx.
+The deployment starts PostgreSQL, waits for the database health check to pass, applies database migrations, and builds and starts the two API containers and Nginx using Docker Compose.
 
-Verification
+### Verification
 
-Check the status of the containers:
+Run the following commands **inside the VM** to verify the deployment:
 
+```bash
 docker compose ps
+```
 
-Confirm that PostgreSQL is healthy and that both API instances and Nginx are running.
+Check that PostgreSQL is healthy and that `api1`, `api2`, and `nginx` are running.
 
-Test the health endpoint:
+Test the API health endpoint:
 
+```bash
 curl -i http://localhost:8080/healthcheck
+```
 
-Expected response: HTTP 200 OK.
+Expected response: `HTTP 200 OK` with a JSON response indicating that the service is healthy.
 
-View Nginx logs:
+Inspect Nginx access logs to see incoming requests and their upstream API instances:
 
+```bash
 docker compose logs nginx
+```
 
-View application logs:
+View application logs for troubleshooting:
 
+```bash
 docker compose logs api1 api2
+```
 
-API Access
+### API Endpoints
 
-The REST API is exposed through Nginx on port 8080.
+The REST API is exposed through Nginx on port `8080`.
 
-Base URL:
+**Base URL:** `http://localhost:8080`
 
-http://localhost:8080
+| Method | Endpoint | Expected Status |
+|---|---|---|
+| GET | `/healthcheck` | 200 OK |
+| POST | `/api/v1/students` | 201 Created |
+| GET | `/api/v1/students` | 200 OK |
+| GET | `/api/v1/students/{id}` | 200 OK |
+| PUT | `/api/v1/students/{id}` | 200 OK |
+| DELETE | `/api/v1/students/{id}` | 204 No Content |
+| GET | `/api/v1/students/999999` | 404 Not Found |
 
-Method
+Successful deletion returns `204 No Content`, while requesting a student that does not exist returns `404 Not Found`. Invalid requests may return other appropriate error codes.
 
-Endpoint
+When testing from the **host machine**, use the same base URL because Vagrant forwards host port `8080` to port `8080` inside the VM.
 
-Expected status
+### Nginx Load Balancing
 
-GET
+Nginx acts as a reverse proxy and distributes incoming requests across two API containers using its default round-robin load-balancing behavior:
 
-/healthcheck
+- `api1:8000`
+- `api2:8000`
 
-200 OK
+The API containers communicate with PostgreSQL over the Docker Compose network. Nginx access logs can be used to verify which upstream handled each request.
 
-POST
+### Postman Testing
 
-/api/v1/students
+From Postman on the host machine, import:
 
-201 Created
+`postman/OpsFusion-Milestone5.postman_collection.json`
 
-GET
+Set the collection's base URL to `http://localhost:8080` if needed, then run the requests in order. The collection tests the health check, student creation, listing, retrieval, update, deletion, and not-found handling. Automated assertions validate expected status codes and selected response fields.
 
-/api/v1/students
+### Cleanup
 
-200 OK
+**1. Stop the application containers — inside the VM:**
 
-GET
-
-/api/v1/students/{id}
-
-200 OK
-
-PUT
-
-/api/v1/students/{id}
-
-200 OK
-
-DELETE
-
-/api/v1/students/{id}
-
-204 No Content
-
-GET
-
-/api/v1/students/999999
-
-404 Not Found
-
-Successful deletion returns 204 No Content. Requests for a nonexistent student return 404 Not Found.
-
-The expected status codes above describe successful operations and the specified not-found test; invalid requests may return other appropriate error codes.
-
-Nginx Load Balancing
-
-Nginx is configured with an upstream group containing both API containers:
-
-api1:8000
-
-api2:8000
-
-Incoming requests on port 8080 are forwarded to the API instances using Nginx's default round-robin load-balancing behavior.
-
-Inspect the Nginx access logs to verify which upstream handled each request:
-
-docker compose logs nginx
-
-Postman Testing
-
-Import the following collection into Postman:
-
-postman/OpsFusion-Milestone5.postman_collection.json
-
-Run the requests in order. The collection tests:
-
-- Health check
-
-- Student creation
-
-- Student listing
-
-- Student retrieval
-
-- Student update
-
-- Student deletion
-
-- Retrieval of a nonexistent student
-
-Automated assertions validate the expected HTTP status codes and selected response fields.
-
-Cleanup
-
-Stop the application containers from inside the VM:
-
+```bash
 make stop
+exit
+```
 
-Exit the VM if needed, then halt it from the host machine:
+The `exit` command returns you to the host machine.
 
+**2. Halt the virtual machine — on the host machine:**
+
+```bash
 vagrant halt
+```
 
-To remove the virtual machine entirely:
-
-vagrant destroy
-
-Destroying the VM does not delete the project files in the host repository.
+To remove the VM entirely, run `vagrant destroy` on the host machine. This removes the virtual machine but does not delete the project files in your repository.
