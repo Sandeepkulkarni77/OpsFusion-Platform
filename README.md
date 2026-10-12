@@ -886,92 +886,157 @@ This milestone extends OpsFusion-Platform with a multi-container deployment, Ngi
 
 ### Deployment
 
-Start and provision the virtual machine:
+1. Start and provision the virtual machine
 
-```bash
+Run these commands on the host machine from the project root:
+
 vagrant up
-```
 
-Connect to the VM and deploy the services:
+2. Connect to the VM
 
-```bash
 vagrant ssh
+
+3. Deploy the services
+
+Run the following commands inside the VM:
+
 cd /vagrant
 make deploy
-```
 
-Check container status:
+The deployment starts PostgreSQL, waits for the database to become healthy, runs database migrations, and starts both API instances and Nginx.
 
-```bash
+Verification
+
+Check the status of the containers:
+
 docker compose ps
-```
 
-View Nginx and application logs:
+Confirm that PostgreSQL is healthy and that both API instances and Nginx are running.
 
-```bash
-docker compose logs nginx
-docker compose logs api1 api2
-```
+Test the health endpoint:
 
-### API Access
-
-The API is exposed through Nginx on port `8080`.
-
-Health check:
-
-```bash
 curl -i http://localhost:8080/healthcheck
-```
 
-Expected response: HTTP `200 OK`.
+Expected response: HTTP 200 OK.
 
-Student API endpoints:
+View Nginx logs:
 
-| Method | Endpoint | Expected status |
-|---|---|---|
-| GET | `/healthcheck` | 200 |
-| POST | `/api/v1/students` | 201 |
-| GET | `/api/v1/students` | 200 |
-| GET | `/api/v1/students/{id}` | 200 |
-| PUT | `/api/v1/students/{id}` | 200 |
-| DELETE | `/api/v1/students/{id}` | 204 |
-| GET | `/api/v1/students/999999` | 404 |
-
-Successful deletion returns `204 No Content`. Requests for nonexistent students return `404 Not Found`.
-
-### Nginx Load Balancing
-
-Nginx uses an upstream group containing both API containers:
-
-- `api1:8000`
-- `api2:8000`
-
-Requests arriving on port `8080` are proxied to the API instances using Nginx's default round-robin load-balancing behavior.
-
-Verify the upstreams in the Nginx access logs:
-
-```bash
 docker compose logs nginx
-```
 
-### Postman Testing
+View application logs:
 
-Import `postman/OpsFusion-Milestone5.postman_collection.json` into Postman and run the requests in order.
+docker compose logs api1 api2
 
-The collection tests the health check, student creation, listing, retrieval, update, deletion, and handling of a nonexistent student. Automated assertions validate the expected HTTP status codes and selected response fields.
+API Access
 
-### Cleanup
+The REST API is exposed through Nginx on port 8080.
 
-Stop the application containers:
+Base URL:
 
-```bash
+http://localhost:8080
+
+Method
+
+Endpoint
+
+Expected status
+
+GET
+
+/healthcheck
+
+200 OK
+
+POST
+
+/api/v1/students
+
+201 Created
+
+GET
+
+/api/v1/students
+
+200 OK
+
+GET
+
+/api/v1/students/{id}
+
+200 OK
+
+PUT
+
+/api/v1/students/{id}
+
+200 OK
+
+DELETE
+
+/api/v1/students/{id}
+
+204 No Content
+
+GET
+
+/api/v1/students/999999
+
+404 Not Found
+
+Successful deletion returns 204 No Content. Requests for a nonexistent student return 404 Not Found.
+
+The expected status codes above describe successful operations and the specified not-found test; invalid requests may return other appropriate error codes.
+
+Nginx Load Balancing
+
+Nginx is configured with an upstream group containing both API containers:
+
+api1:8000
+
+api2:8000
+
+Incoming requests on port 8080 are forwarded to the API instances using Nginx's default round-robin load-balancing behavior.
+
+Inspect the Nginx access logs to verify which upstream handled each request:
+
+docker compose logs nginx
+
+Postman Testing
+
+Import the following collection into Postman:
+
+postman/OpsFusion-Milestone5.postman_collection.json
+
+Run the requests in order. The collection tests:
+
+- Health check
+
+- Student creation
+
+- Student listing
+
+- Student retrieval
+
+- Student update
+
+- Student deletion
+
+- Retrieval of a nonexistent student
+
+Automated assertions validate the expected HTTP status codes and selected response fields.
+
+Cleanup
+
+Stop the application containers from inside the VM:
+
 make stop
-```
 
-Stop the VM from the host machine:
+Exit the VM if needed, then halt it from the host machine:
 
-```bash
 vagrant halt
-```
 
-To remove the VM entirely, run `vagrant destroy` from the host machine. This does not delete the project files.
+To remove the virtual machine entirely:
+
+vagrant destroy
+
+Destroying the VM does not delete the project files in the host repository.
