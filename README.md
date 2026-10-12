@@ -882,6 +882,8 @@ This milestone extends OpsFusion-Platform with a multi-container deployment, Ngi
 
 #### Deployment Architecture
 
+<img width="607" height="455" alt="image" src="https://github.com/user-attachments/assets/e866acef-e591-467b-8393-b0316e62905b" />
+
 ### Deployment
 
 Start and provision the virtual machine:
