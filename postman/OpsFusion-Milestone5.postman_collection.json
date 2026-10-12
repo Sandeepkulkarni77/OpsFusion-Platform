@@ -1,0 +1,191 @@
+
+{
+  "info": {
+    "name": "OpsFusion Platform - Milestone 5",
+    "description": "API endpoint tests through Nginx load balancer on port 8080.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "studentId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/healthcheck"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Health check returns 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Database health is OK', function () {",
+              "  pm.expect(pm.response.json().status).to.eql('ok');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Student",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Milestone Five Test\",\n  \"email\": \"milestone5-test@example.com\",\n  \"age\": 22\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/students"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Student created with 201', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "if (pm.response.code === 201) {",
+              "  const student = pm.response.json();",
+              "  pm.expect(student).to.have.property('id');",
+              "  pm.collectionVariables.set('studentId', student.id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Students",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/students"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('List students returns 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response is an array', function () {",
+              "  pm.expect(pm.response.json()).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Student",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/students/{{studentId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Get student returns 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Student",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Milestone Five Updated\",\n  \"age\": 23\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/students/{{studentId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Update student returns 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Student",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/v1/students/{{studentId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Delete student returns 204', function () {",
+              "  pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Missing Student",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/students/999999"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Missing student returns 404', function () {",
+              "  pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
