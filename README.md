@@ -1,38 +1,6 @@
 # OpsFusion-Platform
 OpsFusion Platform is an end-to-end DevOps system that integrates CI/CD, containerization, Kubernetes orchestration, GitOps-based deployments, and observability into a unified automated workflow from development to production.
 
-</div>
-
-### ⚙️ Application & Infrastructure
-
-<p>
-<img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" />
-<img src="https://img.shields.io/badge/REST_API-009688?style=flat-square" />
-<img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" />
-<img src="https://img.shields.io/badge/DB_Migrations-6C3FC5?style=flat-square" />
-<img src="https://img.shields.io/badge/Makefile-795548?style=flat-square" />
-<img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" />
-<img src="https://img.shields.io/badge/Vagrant-1868F2?style=flat-square&logo=vagrant&logoColor=white" />
-<img src="https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white" />
-<img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=postman&logoColor=white" />
-</p>
-
-### ☸️ Orchestration & Observability
-
-<p>
-<img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white" />
-<img src="https://img.shields.io/badge/Helm-0F1689?style=flat-square&logo=helm&logoColor=white" />
-<img src="https://img.shields.io/badge/Argo_CD-EF7B4D?style=flat-square&logo=argo&logoColor=white" />
-<img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white" />
-<img src="https://img.shields.io/badge/Loki-FCC624?style=flat-square&logo=grafana&logoColor=black" />
-<img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white" />
-<img src="https://img.shields.io/badge/Promtail-7B42BC?style=flat-square&logo=grafana&logoColor=white" />
-➡️
-<img src="https://img.shields.io/badge/Slack_Notifications-4A154B?style=flat-square&logo=slack&logoColor=white" />
-</p>
-
----
-
 ---
 
 ##  Architecture diagram
