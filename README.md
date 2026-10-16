@@ -1,27 +1,37 @@
 # OpsFusion-Platform
 OpsFusion Platform is an end-to-end DevOps system that integrates CI/CD, containerization, Kubernetes orchestration, GitOps-based deployments, and observability into a unified automated workflow from development to production.
 
-![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![REST API](https://img.shields.io/badge/REST-API-009688?style=for-the-badge)
-![Docker](https://img.shields.io/badge/Docker-Containerization-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![DB Migrations](https://img.shields.io/badge/DB-Migrations-6C3FC5?style=for-the-badge)
-![Makefile](https://img.shields.io/badge/Makefile-Build%20Automation-795548?style=for-the-badge)
-![GitHub Actions](https://img.shields.io/badge/GitHub-Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
-![Vagrant](https://img.shields.io/badge/Vagrant-VM%20Provisioning-1868F2?style=for-the-badge&logo=vagrant&logoColor=white)
-![Nginx](https://img.shields.io/badge/Nginx-Load%20Balancing-009639?style=for-the-badge&logo=nginx&logoColor=white)
-![Postman](https://img.shields.io/badge/Postman-API%20Testing-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
-
-![Kubernetes](https://img.shields.io/badge/Kubernetes-Orchestration-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
-![Helm](https://img.shields.io/badge/Helm-Kubernetes%20Packages-0F1689?style=for-the-badge&logo=helm&logoColor=white)
-![Argo CD](https://img.shields.io/badge/Argo%20CD-GitOps-EF7B4D?style=for-the-badge&logo=argo&logoColor=white)
-![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)
-![Loki](https://img.shields.io/badge/Loki-Log%20Aggregation-FCC624?style=for-the-badge&logo=grafana&logoColor=black)
-![Grafana](https://img.shields.io/badge/Grafana-Dashboards-F46800?style=for-the-badge&logo=grafana&logoColor=white)
-![Promtail](https://img.shields.io/badge/Promtail-Log%20Collection-7B42BC?style=for-the-badge&logo=grafana&logoColor=white)
-➡️
-![Slack](https://img.shields.io/badge/Slack-Notifications-4A154B?style=for-the-badge&logo=slack&logoColor=white)
-
 </div>
+
+### ⚙️ Application & Infrastructure
+
+<p>
+<img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" />
+<img src="https://img.shields.io/badge/REST_API-009688?style=flat-square" />
+<img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" />
+<img src="https://img.shields.io/badge/DB_Migrations-6C3FC5?style=flat-square" />
+<img src="https://img.shields.io/badge/Makefile-795548?style=flat-square" />
+<img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" />
+<img src="https://img.shields.io/badge/Vagrant-1868F2?style=flat-square&logo=vagrant&logoColor=white" />
+<img src="https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white" />
+<img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=postman&logoColor=white" />
+</p>
+
+### ☸️ Orchestration & Observability
+
+<p>
+<img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white" />
+<img src="https://img.shields.io/badge/Helm-0F1689?style=flat-square&logo=helm&logoColor=white" />
+<img src="https://img.shields.io/badge/Argo_CD-EF7B4D?style=flat-square&logo=argo&logoColor=white" />
+<img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white" />
+<img src="https://img.shields.io/badge/Loki-FCC624?style=flat-square&logo=grafana&logoColor=black" />
+<img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white" />
+<img src="https://img.shields.io/badge/Promtail-7B42BC?style=flat-square&logo=grafana&logoColor=white" />
+➡️
+<img src="https://img.shields.io/badge/Slack_Notifications-4A154B?style=flat-square&logo=slack&logoColor=white" />
+</p>
+
+---
 
 ---
 
